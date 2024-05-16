@@ -1,0 +1,53 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.basket-table {
+  display: grid;
+}
+.basket-table__head-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 0;
+}
+.basket-table__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 12px 0;
+}
+.basket-table__head-item--first {
+  max-width: 16px;
+}
+.basket-table__row {
+  display: grid;
+  grid-template-columns: 30px repeat(4, 1fr);
+  justify-content: space-between;
+}
+.basket-table__row:hover {
+  background: #cbcbcb;
+}
+.basket__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: #262626;
+  color: #fff;
+  padding: 20px 40px;
+  box-sizing: border-box;
+  margin-top: 20px;
+}
+.basket__btn {
+  padding: 16px;
+  background: #ffcc33;
+  border-radius: 10px;
+  color: #fff;
+}
+.back-calculate {
+  cursor: pointer;
+}

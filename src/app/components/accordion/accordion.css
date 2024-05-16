@@ -30,20 +30,21 @@
 }
 .accordion__body {
   display: flex;
+  flex-direction: column;
   user-select: text;
   cursor: auto;
   width: 100%;
-  gap: 36px;
 }
-.accordion--show > .accordion__body {
+.accordion > .accordion__body {
   display: flex;
   justify-content: space-between;
 }
-.accordion--show > .accordion__body--daughter {
+.accordion > .accordion__body--daughter {
   flex-direction: row;
   background: #fcfafa;
   padding: 15px 20px;
   border-bottom: 1px solid #e6e5e5;
+  gap: 36px;
 }
 .chevron {
   transition: all 0.2s ease-out;

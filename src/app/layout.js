@@ -1,7 +1,5 @@
-import { Inter } from "next/font/google";
+import Image from "next/image";
 import "./globals.css";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "Строительный калькулятор",
@@ -10,8 +8,24 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="ru">
+      <body id="app">
+        <div>
+          <header>
+            <a className="header" href="/">
+              <Image
+                className="logo"
+                src="/logo.svg"
+                alt="Vite logo"
+                width={150}
+                height={50}
+              />
+              <span>Строительный калькулятор</span>
+            </a>
+          </header>
+          {children}
+        </div>
+      </body>
     </html>
   );
 }
