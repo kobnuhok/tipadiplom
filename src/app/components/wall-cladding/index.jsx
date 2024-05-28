@@ -1,19 +1,76 @@
 "use client";
+import { useDispatch } from "react-redux";
 import { Accordion } from "../accordion/accordion";
 import { Input } from "../input/input";
 import { Select } from "../select/select";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { price } from "../../constants";
+import { setTotalPrice } from "../../../store/total";
 
 export const WallCladding = () => {
-  const storedData = localStorage.getItem("dataBuild");
-  const initialData = storedData ? JSON.parse(storedData) : {};
+  const dispatch = useDispatch();
+
+  const initialData = useMemo(() => {
+    const storedData = localStorage.getItem("dataBuild");
+    return storedData ? JSON.parse(storedData) : {};
+  }, []);
 
   const [wallCladding, setWallCladding] = useState({
     tileWallArea: initialData.wallCladding?.tileWallArea || "",
     claddingArea: initialData.wallCladding?.claddingArea || "",
     tileWallAreaMaterial: initialData.wallCladding?.tileWallAreaMaterial || "",
     claddingAreaMaterial: initialData.wallCladding?.claddingAreaMaterial || "",
+    priceTileWallMaterial: initialData.wallCladding?.priceTileWallMaterial || 0,
+    priceCladdingMaterial: initialData.wallCladding?.priceCladdingMaterial || 0,
   });
+
+  useEffect(() => {
+    dispatch(
+      setTotalPrice({
+        priceTileWallMaterial: wallCladding.priceTileWallMaterial,
+        priceCladdingMaterial: wallCladding.priceCladdingMaterial,
+      })
+    );
+  }, [wallCladding, dispatch]);
+
+  useEffect(() => {
+    const {
+      tileWallArea,
+      tileWallAreaMaterial,
+      claddingArea,
+      claddingAreaMaterial,
+    } = wallCladding;
+
+    const calculatePrice = (s, obj, val) => {
+      if (val == 0) {
+        return 0;
+      }
+      return s * (price[obj][val] ? price[obj][val] : 0);
+    };
+
+    const priceTileWallMaterial = calculatePrice(
+      tileWallArea,
+      "materialTileWall",
+      tileWallAreaMaterial
+    );
+    const priceCladdingMaterial = calculatePrice(
+      claddingArea,
+      "materialWallCladding",
+      claddingAreaMaterial
+    );
+    if (priceTileWallMaterial !== wallCladding.priceTileWallMaterial) {
+      setWallCladding((prevState) => ({
+        ...prevState,
+        priceTileWallMaterial: priceTileWallMaterial,
+      }));
+    }
+    if (priceCladdingMaterial !== wallCladding.priceCladdingMaterial) {
+      setWallCladding((prevState) => ({
+        ...prevState,
+        priceCladdingMaterial: priceCladdingMaterial,
+      }));
+    }
+  }, [wallCladding]);
 
   useEffect(() => {
     const updatedData = {
@@ -21,7 +78,7 @@ export const WallCladding = () => {
       wallCladding: wallCladding,
     };
     localStorage.setItem("dataBuild", JSON.stringify(updatedData));
-  }, [wallCladding]);
+  }, [initialData, wallCladding]);
 
   const handleInputChange = async (event) => {
     const { name, value } = event.target;
@@ -44,6 +101,7 @@ export const WallCladding = () => {
         />
         <Select
           name="tileWallAreaMaterial"
+          label="Материал"
           value={wallCladding.tileWallAreaMaterial}
           onChange={handleInputChange}
         />
@@ -59,6 +117,7 @@ export const WallCladding = () => {
         />
         <Select
           name="claddingAreaMaterial"
+          label="Материал"
           value={wallCladding.claddingAreaMaterial}
           onChange={handleInputChange}
         />

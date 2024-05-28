@@ -7,16 +7,44 @@ import { FloorPouring } from "./components/floor-pouring/index";
 import { CeilingPaint } from "./components/ceiling-paint/index";
 import { SuspendedCeiling } from "./components/suspended-ceiling/index";
 import { WallCladding } from "./components/wall-cladding/index";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
 export default function Home() {
+  const totalPrice = useSelector((state) => state.totalPrice);
+  const [total, setTotal] = useState(0);
+
+  useEffect(() => {
+    setTotal(
+      Number(totalPrice.priceTileWallMaterial) +
+        Number(totalPrice.priceCladdingMaterial) +
+        Number(totalPrice.priceDrywallJob) +
+        Number(totalPrice.priceDrywallMaterial) +
+        Number(totalPrice.pricePlasterJob) +
+        Number(totalPrice.pricePlasterMaterial) +
+        Number(totalPrice.priceMasticMaterial) +
+        Number(totalPrice.priceMasticJob) +
+        Number(totalPrice.priceRollMaterial) +
+        Number(totalPrice.priceRollJob) +
+        Number(totalPrice.priceFirstAlignMaterial) +
+        Number(totalPrice.priceFirstAlignJob) +
+        Number(totalPrice.priceSecondAlignMaterial) +
+        Number(totalPrice.priceSecondAlignJob) +
+        Number(totalPrice.pricePaintMaterial) +
+        Number(totalPrice.pricePaintJob)
+    );
+  }, [totalPrice]);
+
   useEffect(() => {
     const storedData = localStorage.getItem("dataBuild");
-    storedData
-      ? JSON.parse(storedData)
-      : localStorage.setItem("dataBuild", JSON.stringify({}));
-
+    if (!storedData) {
+      localStorage.setItem("dataBuild", JSON.stringify({}));
+    }
   }, []);
+  const clear = () => {
+    localStorage.setItem("dataBuild", JSON.stringify({}));
+    window.location.reload();
+  };
   return (
     <div className="page">
       <h1>Строительный калькулятор!</h1>
@@ -26,12 +54,14 @@ export default function Home() {
           <WaterproofingWorks />
           <FloorPouring />
           <CeilingPaint />
-          <SuspendedCeiling />
+          {/* <SuspendedCeiling /> */}
           <WallCladding />
         </div>
         <div className="total">
           <div className="total__head">
-            <span className="total__price">0</span>
+            <span className="total__price">
+              {total ? total.toLocaleString("ru-RU") : 0}₽
+            </span>
             <span className="total__price-text">добавлено в расчеты</span>
           </div>
           <div className="total__body">
@@ -44,7 +74,7 @@ export default function Home() {
             </button>
             <div className="total__clear">
               <CloseGray />
-              <span className="total__clear-title">
+              <span onClick={clear} className="total__clear-title">
                 Сбросить все введённые данные
               </span>
             </div>
