@@ -1,16 +1,23 @@
 import "../../cart/page.css";
 
-export const ItemCart = ({service=5, priceService=6, priceMaterial=9, total=78}) => {
+export const ItemCart = ({ nameJob, priceJob, priceMaterial }) => {
   return (
     <div className="basket-table__row">
-      <input
+      {/* <input
         type="checkbox"
         className="basket-table__head-item basket-table__head-item--first"
-      />
-      <div className="basket-table__item">{service}</div>
-      <div className="basket-table__item">{priceService}</div>
-      <div className="basket-table__item">{priceMaterial}</div>
-      <div className="basket-table__item">{total}</div>
+      /> */}
+      <div></div>
+      <div className="basket-table__item">{nameJob}</div>
+      <div className="basket-table__item">
+        {priceJob.toLocaleString("ru-RU")}₽
+      </div>
+      <div className="basket-table__item">
+        {priceMaterial.toLocaleString("ru-RU")}₽
+      </div>
+      <div className="basket-table__item">
+        {(priceJob + priceMaterial).toLocaleString("ru-RU")}₽
+      </div>
     </div>
   );
 };

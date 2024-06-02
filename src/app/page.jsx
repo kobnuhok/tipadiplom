@@ -18,6 +18,8 @@ export default function Home() {
     setTotal(
       Number(totalPrice.priceTileWallMaterial) +
         Number(totalPrice.priceCladdingMaterial) +
+        Number(totalPrice.priceTileWallJob) +
+        Number(totalPrice.priceCladdingJob) +
         Number(totalPrice.priceDrywallJob) +
         Number(totalPrice.priceDrywallMaterial) +
         Number(totalPrice.pricePlasterJob) +
@@ -69,9 +71,9 @@ export default function Home() {
               Строительный калькулятор поможет вам в расчёте стоимости
               строительных работ
             </span>
-            <button id="basket" className="button">
+            <a href="/cart" id="basket" className="button">
               Рассчитать смету
-            </button>
+            </a>
             <div className="total__clear">
               <CloseGray />
               <span onClick={clear} className="total__clear-title">

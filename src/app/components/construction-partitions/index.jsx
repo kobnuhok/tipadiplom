@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
+
 import { useDispatch } from "react-redux";
 import { Accordion } from "../accordion/accordion";
 import { Input } from "../input/input";
@@ -16,112 +17,125 @@ export const ConstructionPartitions = () => {
   }, []);
 
   const [walls, setWalls] = useState({
-    drywallLength: initialData.walls?.drywallLength || "",
-    drywallHeight: initialData.walls?.drywallHeight || "",
-    drywallAreaMaterial: initialData.walls?.drywallAreaMaterial || "",
-    priceDrywallMaterial: initialData.walls?.priceDrywallMaterial || "",
-    priceDrywallJob: initialData.walls?.priceDrywallJob || "",
-    plasterLength: initialData.walls?.plasterLength || "",
-    plasterHeight: initialData.walls?.plasterHeight || "",
-    plasterAreaMaterial: initialData.walls?.plasterAreaMaterial || "",
-    pricePlasterMaterial: initialData.walls?.pricePlasterMaterial || "",
-    pricePlasterJob: initialData.walls?.pricePlasterJob || "",
+    drywall: {
+      nameJob:
+        initialData.walls?.drywall?.nameJob ||
+        "Возведение перегордок из гипсокартона",
+      length: initialData.walls?.drywall?.length || "",
+      height: initialData.walls?.drywall?.height || "",
+      material: initialData.walls?.drywall?.material || "",
+      priceMaterial: initialData.walls?.drywall?.priceMaterial || "",
+      priceJob: initialData.walls?.drywall?.priceJob || "",
+    },
+    plaster: {
+      nameJob:
+        initialData.walls?.nameJob || "Облицовка стен гипсокартоном на каркасе",
+      length: initialData.walls?.length || "",
+      height: initialData.walls?.height || "",
+      material: initialData.walls?.material || "",
+      priceMaterial: initialData.walls?.priceMaterial || "",
+      priceJob: initialData.walls?.priceJob || "",
+    },
   });
 
   useEffect(() => {
     dispatch(
       setTotalPrice({
-        priceDrywallMaterial: walls.priceDrywallMaterial,
-        priceDrywallJob: walls.priceDrywallJob,
-        pricePlasterMaterial: walls.pricePlasterMaterial,
-        pricePlasterJob: walls.pricePlasterJob,
+        priceDrywallMaterial: walls.drywall.priceMaterial,
+        priceDrywallJob: walls.drywall.priceJob,
+        pricePlasterMaterial: walls.plaster.priceMaterial,
+        pricePlasterJob: walls.plaster.priceJob,
       })
     );
   }, [
-    walls.priceDrywallJob,
-    walls.priceDrywallMaterial,
-    walls.pricePlasterMaterial,
-    walls.pricePlasterJob,
+    walls.drywall.priceMaterial,
+    walls.drywall.priceJob,
+    walls.plaster.priceMaterial,
+    walls.plaster.priceJob,
     dispatch,
   ]);
 
   useEffect(() => {
     const calculatePrice = (len, h, obj, val, job) => {
-      if (val == 0) {
-        return 0;
+      let priceJob = 0;
+      let priceMaterial = 0;
+      if (val == 0 || len == "0" || h == "0") {
+        priceMaterial = 0;
+        priceJob = 0;
+      } else {
+        let pl = Math.ceil((len * h * 2) / 3);
+        priceJob = price[job] * pl;
+        priceMaterial = pl * price[obj][val];
       }
-      let pl = Math.ceil((len * h * 2) / 3);
-      const priceJob = price[job] * pl;
-      const priceMaterial = pl * price[obj][val];
       return { priceMaterial, priceJob };
     };
 
-    const {
-      drywallLength,
-      drywallHeight,
-      drywallAreaMaterial,
-      plasterLength,
-      plasterHeight,
-      plasterAreaMaterial,
-    } = walls;
+    const { drywall, plaster } = walls;
 
-    if (drywallLength && drywallHeight && drywallAreaMaterial) {
+    if (drywall.length && drywall.height && drywall.material) {
       const { priceMaterial: priceMaterialDrywall, priceJob: priceJobDrywall } =
         calculatePrice(
-          drywallLength,
-          drywallHeight,
+          drywall.length,
+          drywall.height,
           "materialDrywall",
-          drywallAreaMaterial,
+          drywall.material,
           "jobDrywall"
         );
-
-      if (priceMaterialDrywall !== walls.priceDrywallMaterial) {
+      if (priceMaterialDrywall !== walls.drywall.priceMaterial) {
         setWalls((prevState) => ({
           ...prevState,
-          priceDrywallMaterial: priceMaterialDrywall,
+          drywall: {
+            ...prevState["drywall"],
+            priceMaterial: priceMaterialDrywall,
+          },
         }));
       }
-      if (priceJobDrywall !== walls.priceDrywallJob) {
+      if (priceJobDrywall !== walls.drywall.priceJob) {
         setWalls((prevState) => ({
           ...prevState,
-          priceDrywallJob: priceJobDrywall,
+          drywall: {
+            ...prevState["drywall"],
+            priceJob: priceJobDrywall,
+          },
         }));
       }
     }
-    if (plasterLength && plasterHeight && plasterAreaMaterial) {
+    if (plaster.length && plaster.height && plaster.material) {
       const { priceMaterial: priceMaterialPlaster, priceJob: priceJobPlaster } =
         calculatePrice(
-          plasterLength,
-          plasterHeight,
+          plaster.length,
+          plaster.height,
           "materialPlaster",
-          plasterAreaMaterial,
+          plaster.material,
           "jobPlaster"
         );
 
-      if (priceMaterialPlaster !== walls.pricePlasterMaterial) {
+      if (priceMaterialPlaster !== walls.plaster.priceMaterial) {
         setWalls((prevState) => ({
           ...prevState,
-          pricePlasterMaterial: priceMaterialPlaster,
+          plaster: {
+            ...prevState["plaster"],
+            priceMaterial: priceMaterialPlaster,
+          },
         }));
       }
-      if (priceJobPlaster !== walls.pricePlasterJob) {
+      if (priceJobPlaster !== walls.plaster.priceJob) {
         setWalls((prevState) => ({
           ...prevState,
-          pricePlasterJob: priceJobPlaster,
+          plaster: {
+            ...prevState["plaster"],
+            priceJob: priceJobPlaster,
+          },
         }));
       }
     }
   }, [
-    walls.drywallLength,
-    walls.drywallHeight,
-    walls.drywallAreaMaterial,
-    walls.priceDrywallMaterial,
-    walls.priceDrywallJob,
-    walls.plasterLength,
-    walls.plasterHeight,
-    walls.plasterAreaMaterial,
-    walls.pricePlasterMaterial,
-    walls.pricePlasterJob,
+    walls.drywall.length,
+    walls.drywall.height,
+    walls.drywall.material,
+    walls.plaster.length,
+    walls.plaster.height,
+    walls.plaster.material,
   ]);
 
   useEffect(() => {
@@ -132,12 +146,15 @@ export const ConstructionPartitions = () => {
     localStorage.setItem("dataBuild", JSON.stringify(updatedData));
   }, [initialData, walls]);
 
-  const handleInputChange = async (event) => {
-    const { name, value } = event.target;
-    setWalls({
-      ...walls, // сохраняем предыдущие значения
-      [name]: value, // обновляем значение для конкретного input
-    });
+  const handleChange = (form, field) => (e) => {
+    const { value } = e.target;
+    setWalls((prevState) => ({
+      ...prevState,
+      [form]: {
+        ...prevState[form],
+        [field]: value || 0,
+      },
+    }));
   };
 
   return (
@@ -148,52 +165,46 @@ export const ConstructionPartitions = () => {
     >
       <Accordion title="Возведение перегордок из гипсокартона" daughter>
         <Input
-          name="drywallLength"
           type="number"
           label="Длина перегородки, м"
           placeholder="Введите длину перегородки"
-          value={walls.drywallLength}
-          onChange={handleInputChange}
+          value={walls.drywall.length}
+          onChange={handleChange("drywall", "length")}
         />
         <Input
-          name="drywallHeight"
           type="number"
           label="Высота перегородки, м"
           placeholder="Введите высоту перегородки"
-          value={walls.drywallHeight}
-          onChange={handleInputChange}
+          value={walls.drywall.height}
+          onChange={handleChange("drywall", "height")}
         />
         <Select
-          name="drywallAreaMaterial"
           label="Материал"
-          value={walls.drywallAreaMaterial}
+          value={walls.drywall.material}
           options={typePrice}
-          onChange={handleInputChange}
+          onChange={handleChange("drywall", "material")}
         />
       </Accordion>
       <Accordion title="Облицовка стен гипсокартоном на каркасе" daughter>
         <Input
-          name="plasterLength"
           type="number"
           label="Общая длина стен, м"
           placeholder="Введите общую длину стен"
-          value={walls.plasterLength}
-          onChange={handleInputChange}
+          value={walls.plaster.length}
+          onChange={handleChange("plaster", "length")}
         />
         <Input
-          name="plasterHeight"
           type="number"
           label="Высота стен, м"
           placeholder="Введите высоту стен"
-          value={walls.plasterHeight}
-          onChange={handleInputChange}
+          value={walls.plaster.height}
+          onChange={handleChange("plaster", "height")}
         />
         <Select
-          name="plasterAreaMaterial"
           label="Материал"
-          value={walls.plasterAreaMaterial}
+          value={walls.plaster.material}
           options={typePrice}
-          onChange={handleInputChange}
+          onChange={handleChange("plaster", "material")}
         />
       </Accordion>
     </Accordion>

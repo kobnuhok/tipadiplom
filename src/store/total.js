@@ -26,6 +26,14 @@ const totalPrice = createSlice({
         action.payload.priceCladdingMaterial !== undefined
           ? action.payload.priceCladdingMaterial
           : state.priceCladdingMaterial;
+      state.priceTileWallJob =
+        action.payload.priceTileWallJob !== undefined
+          ? action.payload.priceTileWallJob
+          : state.priceTileWallJob;
+      state.priceCladdingJob =
+        action.payload.priceCladdingJob !== undefined
+          ? action.payload.priceCladdingJob
+          : state.priceCladdingJob;
       state.priceDrywallJob =
         action.payload.priceDrywallJob !== undefined
           ? action.payload.priceDrywallJob

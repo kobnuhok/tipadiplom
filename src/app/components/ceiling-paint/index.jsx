@@ -16,62 +16,75 @@ export const CeilingPaint = () => {
   }, []);
 
   const [paint, setPaint] = useState({
-    paintАrea: initialData.paint?.paintАrea || "",
-    paintLayers: initialData.paint?.paintLayers || "",
-    paintMaterial: initialData.paint?.paintMaterial || "",
-    pricePaintMaterial: initialData.paint?.pricePaintMaterial || "",
-    pricePaintJob: initialData.paint?.pricePaintJob || "",
+    square: {
+      nameJob: initialData.paint?.square.nameJob || "Лакокрасочные работы",
+      area: initialData.paint?.square.area || "",
+      layers: initialData.paint?.square.layers || "",
+      material: initialData.paint?.square.material || "",
+      priceMaterial: initialData.paint?.square.priceMaterial || "",
+      priceJob: initialData.paint?.square.priceJob || "",
+    },
   });
 
   useEffect(() => {
     dispatch(
       setTotalPrice({
-        pricePaintMaterial: paint.pricePaintMaterial,
-        pricePaintJob: paint.pricePaintJob,
+        pricePaintMaterial: paint.square.priceMaterial,
+        pricePaintJob: paint.square.priceJob,
       })
     );
-  }, [paint.pricePaintMaterial, paint.pricePaintJob, dispatch]);
+  }, [paint.square.priceMaterial, paint.square.priceJob, dispatch]);
 
   useEffect(() => {
     const calculatePrice = (pl, lay, obj, val, job) => {
-      if (val == 0) {
-        return 0;
+      let priceJob = 0;
+      let priceMaterial = 0;
+      if (val == 0 || lay == "0" || pl == "0") {
+        priceMaterial = 0;
+        priceJob = 0;
+      } else {
+        priceJob = price[job] * pl;
+        priceMaterial = Math.ceil(pl * lay * 0.0074) * price[obj][val];
       }
-      const priceJob = price[job] * pl;
-      const priceMaterial = Math.ceil(pl * lay * 0.0074) * price[obj][val];
       return { priceMaterial, priceJob };
     };
 
-    const { paintАrea, paintLayers, paintMaterial } = paint;
+    const { square } = paint;
 
-    if (paintАrea && paintLayers && paintMaterial) {
+    if (square.area && square.layers && square.material) {
       const { priceMaterial, priceJob } = calculatePrice(
-        paintАrea,
-        paintLayers,
+        square.area,
+        square.layers,
         "materialPaint",
-        paintMaterial,
+        square.material,
         "jobPaint"
       );
 
-      if (priceMaterial !== paint.pricePaintMaterial) {
+      if (priceMaterial !== paint.priceMaterial) {
         setPaint((prevState) => ({
           ...prevState,
-          pricePaintMaterial: priceMaterial,
+          square: {
+            ...prevState["square"],
+            priceMaterial: priceMaterial,
+          },
         }));
       }
-      if (priceJob !== paint.pricePaintJob) {
+      if (priceJob !== paint.priceJob) {
         setPaint((prevState) => ({
           ...prevState,
-          pricePaintJob: priceJob,
+          square: {
+            ...prevState["square"],
+            priceJob: priceJob,
+          },
         }));
       }
     }
   }, [
-    paint.paintАrea,
-    paint.paintLayers,
-    paint.paintMaterial,
-    paint.pricePaintMaterial,
-    paint.pricePaintJob,
+    paint.square.area,
+    paint.square.layers,
+    paint.square.material,
+    paint.square.priceMaterial,
+    paint.square.priceJob,
   ]);
 
   useEffect(() => {
@@ -82,12 +95,15 @@ export const CeilingPaint = () => {
     localStorage.setItem("dataBuild", JSON.stringify(updatedData));
   }, [initialData, paint]);
 
-  const handleInputChange = async (event) => {
-    const { name, value } = event.target;
-    setPaint({
-      ...paint, // сохраняем предыдущие значения
-      [name]: value, // обновляем значение для конкретного input
-    });
+  const handleChange = (form, field) => (e) => {
+    const { value } = e.target;
+    setPaint((prevState) => ({
+      ...prevState,
+      [form]: {
+        ...prevState[form],
+        [field]: value || 0,
+      },
+    }));
   };
 
   return (
@@ -98,27 +114,24 @@ export const CeilingPaint = () => {
     >
       <Accordion title="Расчет краски на площадь" daughter>
         <Input
-          name="paintАrea"
           type="number"
           label="Расчет краски на площадь, м²"
           placeholder="Введите площадь"
-          value={paint.paintАrea}
-          onChange={handleInputChange}
+          value={paint.square.area}
+          onChange={handleChange("square", "area")}
         />
         <Input
-          name="paintLayers"
           type="number"
           label="Количество слоев краски"
           placeholder="Введите количество слоев краски"
-          value={paint.paintLayers}
-          onChange={handleInputChange}
+          value={paint.square.layers}
+          onChange={handleChange("square", "layers")}
         />
         <Select
-          name="paintMaterial"
           label="Материал"
-          value={paint.paintMaterial}
+          value={paint.square.material}
           options={typePrice}
-          onChange={handleInputChange}
+          onChange={handleChange("square", "material")}
         />
       </Accordion>
     </Accordion>

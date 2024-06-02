@@ -17,144 +17,165 @@ export const FloorPouring = () => {
   }, []);
 
   const [floor, setFloor] = useState({
-    firstAlignLength: initialData.floor?.firstAlignLength || "",
-    firstAlignWidth: initialData.floor?.firstAlignWidth || "",
-    firstAlignThick: initialData.floor?.firstAlignThick || "",
-    firstAlignMaterial: initialData.floor?.firstAlignMaterial || "",
-    priceFirstAlignMaterial: initialData.floor?.priceFirstAlignMaterial || "",
-    priceFirstAlignJob: initialData.floor?.priceFirstAlignJob || "",
-    secondAlignLength: initialData.floor?.secondAlignLength || "",
-    secondAlignWidth: initialData.floor?.secondAlignWidth || "",
-    secondAlignThick: initialData.floor?.secondAlignThick || "",
-    secondAlignMaterial: initialData.floor?.secondAlignMaterial || "",
-    priceSecondAlignMaterial: initialData.floor?.priceSecondAlignMaterial || "",
-    priceSecondAlignJob: initialData.floor?.priceSecondAlignJob || "",
+    firstAlign: {
+      nameJob:
+        initialData.floor?.firstAlign?.nameJob ||
+        "Выравнивание полов первичным ровнителем",
+      length: initialData.floor?.firstAlign?.length || "",
+      width: initialData.floor?.firstAlign?.width || "",
+      thick: initialData.floor?.firstAlign?.thick || "",
+      material: initialData.floor?.firstAlign?.material || "",
+      priceMaterial: initialData.floor?.firstAlign?.priceMaterial || "",
+      priceJob: initialData.floor?.firstAlign?.priceJob || "",
+    },
+    finishAlign: {
+      nameJob:
+        initialData.floor?.finishAlign?.nameJob ||
+        "Выравнивание полов финишным ровнителем",
+      length: initialData.floor?.finishAlign?.length || "",
+      width: initialData.floor?.finishAlign?.width || "",
+      thick: initialData.floor?.finishAlign?.thick || "",
+      material: initialData.floor?.finishAlign?.material || "",
+      priceMaterial: initialData.floor?.finishAlign?.priceMaterial || "",
+      priceJob: initialData.floor?.finishAlign?.priceJob || "",
+    },
   });
 
   useEffect(() => {
     dispatch(
       setTotalPrice({
-        priceFirstAlignMaterial: floor.priceFirstAlignMaterial,
-        priceFirstAlignJob: floor.priceFirstAlignJob,
-        priceSecondAlignMaterial: floor.priceSecondAlignMaterial,
-        priceSecondAlignJob: floor.priceSecondAlignJob,
+        priceFirstAlignMaterial: floor.firstAlign.priceMaterial,
+        priceFirstAlignJob: floor.firstAlign.priceJob,
+        priceSecondAlignMaterial: floor.finishAlign.priceMaterial,
+        priceSecondAlignJob: floor.finishAlign.priceJob,
       })
     );
   }, [
-    floor.priceFirstAlignMaterial,
-    floor.priceFirstAlignJob,
-    floor.priceSecondAlignMaterial,
-    floor.priceSecondAlignJob,
+    floor.firstAlign.priceMaterial,
+    floor.firstAlign.priceJob,
+    floor.finishAlign.priceMaterial,
+    floor.finishAlign.priceJob,
     dispatch,
   ]);
 
   useEffect(() => {
     const calculatePrice = (len, w, th, obj, val, job) => {
-      if (val == 0) {
-        return 0;
+      let priceJob = 0;
+      let priceMaterial = 0;
+      if (val == 0 || len == "0" || w == "0" || th == "0") {
+        priceMaterial = 0;
+        priceJob = 0;
+      } else {
+        let pl = Math.ceil((len * w * 2) / 3);
+        priceJob = price[job] * pl;
+        priceMaterial = Math.ceil(0.72 * pl * th * 10) * price[obj][val];
       }
-      let pl = Math.ceil((len * w * 2) / 3);
-      const priceJob = price[job] * pl;
-      const priceMaterial = Math.ceil(0.72 * pl * th * 10) * price[obj][val];
       return { priceMaterial, priceJob };
     };
 
     const calculatePriceSecond = (len, w, th, obj, val, job) => {
-      if (val == 0) {
-        return 0;
+      let priceJob = 0;
+      let priceMaterial = 0;
+      if (val == 0 || len == "0" || w == "0" || w == "0") {
+        priceMaterial = 0;
+        priceJob = 0;
+      } else {
+        let pl = Math.ceil((len * w * 2) / 3);
+        priceJob = price[job] * pl;
+        priceMaterial = Math.ceil(0.00008 * pl * th * 10) * price[obj][val];
       }
-      let pl = Math.ceil((len * w * 2) / 3);
-      const priceJob = price[job] * pl;
-      const priceMaterial = Math.ceil(0.00008 * pl * th * 10) * price[obj][val];
       return { priceMaterial, priceJob };
     };
 
-    const {
-      firstAlignLength,
-      firstAlignWidth,
-      firstAlignThick,
-      firstAlignMaterial,
-      secondAlignLength,
-      secondAlignWidth,
-      secondAlignThick,
-      secondAlignMaterial,
-    } = floor;
+    const { firstAlign, finishAlign } = floor;
 
     if (
-      firstAlignLength &&
-      firstAlignWidth &&
-      firstAlignThick &&
-      firstAlignMaterial
+      firstAlign.length &&
+      firstAlign.width &&
+      firstAlign.thick &&
+      firstAlign.material
     ) {
       const {
         priceMaterial: priceMaterialFirstAlign,
         priceJob: priceJobFirstAlign,
       } = calculatePrice(
-        firstAlignLength,
-        firstAlignWidth,
-        firstAlignThick,
+        firstAlign.length,
+        firstAlign.width,
+        firstAlign.thick,
         "materialFirstAlign",
-        firstAlignMaterial,
+        firstAlign.material,
         "jobFirstAlign"
       );
 
-      if (priceMaterialFirstAlign !== floor.priceFirstAlignMaterial) {
+      if (priceMaterialFirstAlign !== floor.firstAlign.priceMaterial) {
         setFloor((prevState) => ({
           ...prevState,
-          priceFirstAlignMaterial: priceMaterialFirstAlign,
+          firstAlign: {
+            ...prevState["firstAlign"],
+            priceMaterial: priceMaterialFirstAlign,
+          },
         }));
       }
-      if (priceJobFirstAlign !== floor.priceFirstAlignJob) {
+      if (priceJobFirstAlign !== floor.firstAlign.priceJob) {
         setFloor((prevState) => ({
           ...prevState,
-          priceFirstAlignJob: priceJobFirstAlign,
+          firstAlign: {
+            ...prevState["firstAlign"],
+            priceJob: priceJobFirstAlign,
+          },
         }));
       }
     }
     if (
-      secondAlignLength &&
-      secondAlignWidth &&
-      secondAlignThick &&
-      secondAlignMaterial
+      finishAlign.length &&
+      finishAlign.width &&
+      finishAlign.thick &&
+      finishAlign.material
     ) {
       const {
         priceMaterial: priceMaterialSecondAlign,
         priceJob: priceJobSecondAlign,
       } = calculatePriceSecond(
-        secondAlignLength,
-        secondAlignWidth,
-        secondAlignThick,
+        finishAlign.length,
+        finishAlign.width,
+        finishAlign.thick,
         "materialSecondAlign",
-        secondAlignMaterial,
+        finishAlign.material,
         "jobSecondAlign"
       );
 
-      if (priceMaterialSecondAlign !== floor.priceSecondAlignMaterial) {
+      if (priceMaterialSecondAlign !== floor.finishAlign.priceMaterial) {
         setFloor((prevState) => ({
           ...prevState,
-          priceSecondAlignMaterial: priceMaterialSecondAlign,
+          finishAlign: {
+            ...prevState["finishAlign"],
+            priceMaterial: priceMaterialSecondAlign,
+          },
         }));
       }
-      if (priceJobSecondAlign !== floor.priceSecondAlignJob) {
+      if (priceJobSecondAlign !== floor.finishAlign.priceJob) {
         setFloor((prevState) => ({
           ...prevState,
-          priceSecondAlignJob: priceJobSecondAlign,
+          finishAlign: {
+            ...prevState["finishAlign"],
+            priceJob: priceJobSecondAlign,
+          },
         }));
       }
     }
   }, [
-    floor.firstAlignLength,
-    floor.firstAlignWidth,
-    floor.firstAlignThick,
-    floor.firstAlignMaterial,
-    floor.priceFirstAlignMaterial,
-    floor.priceFirstAlignJob,
-    floor.secondAlignLength,
-    floor.secondAlignWidth,
-    floor.secondAlignThick,
-    floor.secondAlignMaterial,
-    floor.priceSecondAlignMaterial,
-    floor.priceSecondAlignJob,
+    floor.firstAlign.length,
+    floor.firstAlign.width,
+    floor.firstAlign.thick,
+    floor.firstAlign.material,
+    floor.firstAlign.priceMaterial,
+    floor.firstAlign.priceJob,
+    floor.finishAlign.length,
+    floor.finishAlign.width,
+    floor.finishAlign.thick,
+    floor.finishAlign.material,
+    floor.finishAlign.priceMaterial,
+    floor.finishAlign.priceJob,
   ]);
 
   useEffect(() => {
@@ -165,12 +186,15 @@ export const FloorPouring = () => {
     localStorage.setItem("dataBuild", JSON.stringify(updatedData));
   }, [initialData, floor]);
 
-  const handleInputChange = async (event) => {
-    const { name, value } = event.target;
-    setFloor({
-      ...floor, // сохраняем предыдущие значения
-      [name]: value, // обновляем значение для конкретного input
-    });
+  const handleChange = (form, field) => (e) => {
+    const { value } = e.target;
+    setFloor((prevState) => ({
+      ...floor,
+      [form]: {
+        ...prevState[form],
+        [field]: value || 0,
+      },
+    }));
   };
 
   return (
@@ -181,68 +205,60 @@ export const FloorPouring = () => {
     >
       <Accordion title="Выравнивание полов первичным ровнителем" daughter>
         <Input
-          name="firstAlignLength"
           type="number"
           label="Длина помещения, м"
           placeholder="Введите длину помещения"
-          value={floor.firstAlignLength}
-          onChange={handleInputChange}
+          value={floor.firstAlign.length}
+          onChange={handleChange("firstAlign", "length")}
         />
         <Input
-          name="firstAlignWidth"
           type="number"
           label="Ширина помещения, м"
           placeholder="Введите ширину помещния"
-          value={floor.firstAlignWidth}
-          onChange={handleInputChange}
+          value={floor.firstAlign.width}
+          onChange={handleChange("firstAlign", "width")}
         />
         <Input
-          name="firstAlignThick"
           type="number"
           label="Толщина  слоя, см"
           placeholder="Введите толщину слоя"
-          value={floor.firstAlignThick}
-          onChange={handleInputChange}
+          value={floor.firstAlign.thick}
+          onChange={handleChange("firstAlign", "thick")}
         />
         <Select
-          name="firstAlignMaterial"
           label="Материал"
-          value={floor.firstAlignMaterial}
+          value={floor.firstAlign.material}
           options={typePrice}
-          onChange={handleInputChange}
+          onChange={handleChange("firstAlign", "material")}
         />
       </Accordion>
       <Accordion title="Выравнивание полов финишным ровнителем" daughter>
         <Input
-          name="secondAlignLength"
           type="number"
           label="Длина помещения, м"
           placeholder="Введите длину помещения"
-          value={floor.secondAlignLength}
-          onChange={handleInputChange}
+          value={floor.finishAlign.length}
+          onChange={handleChange("finishAlign", "length")}
         />
         <Input
-          name="secondAlignWidth"
           type="number"
           label="Ширина помещения, м"
           placeholder="Введите ширину помещения"
-          value={floor.secondAlignWidth}
-          onChange={handleInputChange}
+          value={floor.finishAlign.width}
+          onChange={handleChange("finishAlign", "width")}
         />
         <Input
-          name="secondAlignThick"
           type="number"
           label="Толщина  слоя, см"
           placeholder="Введите толщину слоя"
-          value={floor.secondAlignThick}
-          onChange={handleInputChange}
+          value={floor.finishAlign.thick}
+          onChange={handleChange("finishAlign", "thick")}
         />
         <Select
-          name="secondAlignMaterial"
           label="Материал"
-          value={floor.secondAlignMaterial}
+          value={floor.finishAlign.material}
           options={typePrice}
-          onChange={handleInputChange}
+          onChange={handleChange("finishAlign", "material")}
         />
       </Accordion>
     </Accordion>

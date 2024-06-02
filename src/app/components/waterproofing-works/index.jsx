@@ -16,104 +16,120 @@ export const WaterproofingWorks = () => {
   }, []);
 
   const [waterproof, setWaterproof] = useState({
-    waterproofMasticArea: initialData.waterproof?.waterproofMasticArea || "",
-    waterproofRollArea: initialData.waterproof?.waterproofRollArea || "",
-    waterproofMasticMaterial: initialData.waterproof?.waterproofMasticMaterial,
-    waterproofRollMaterial:
-      initialData.waterproof?.waterproofRollMaterial || "",
-    priceMasticMaterial: initialData.waterproof?.priceMasticMaterial || "",
-    priceMasticJob: initialData.waterproof?.priceMasticJob || "",
-    priceRollMaterial: initialData.waterproof?.priceRollMaterial || "",
-    priceRollJob: initialData.waterproof?.priceRollJob || "",
+    mastic: {
+      nameJob:
+        initialData.waterproof?.mastic?.nameJob ||
+        "Гидроизоляция мастикой на битумной основе",
+      area: initialData.waterproof?.mastic?.area || "",
+      material: initialData.waterproof?.mastic?.material || "",
+      priceJob: initialData.waterproof?.mastic?.priceJob || "",
+      priceMaterial: initialData.waterproof?.mastic?.priceMaterial || "",
+    },
+    roll: {
+      nameJob:
+        initialData.waterproof?.roll?.nameJob ||
+        "Гидроизоляция рулонными материалами",
+      area: initialData.waterproof?.roll?.area || "",
+      material: initialData.waterproof?.roll?.material || "",
+      priceJob: initialData.waterproof?.roll?.priceJob || "",
+      priceMaterial: initialData.waterproof?.roll?.priceMaterial || "",
+    },
   });
 
   useEffect(() => {
     dispatch(
       setTotalPrice({
-        priceMasticMaterial: waterproof.priceMasticMaterial,
-        priceMasticJob: waterproof.priceMasticJob,
-        priceRollMaterial: waterproof.priceRollMaterial,
-        priceRollJob: waterproof.priceRollJob,
+        priceMasticMaterial: waterproof.mastic.priceMaterial,
+        priceMasticJob: waterproof.mastic.priceJob,
+        priceRollMaterial: waterproof.roll.priceMaterial,
+        priceRollJob: waterproof.roll.priceJob,
       })
     );
   }, [
-    waterproof.priceMasticMaterial,
-    waterproof.priceMasticJob,
-    waterproof.priceRollMaterial,
-    waterproof.priceRollJob,
+    waterproof.mastic.priceMaterial,
+    waterproof.mastic.priceJob,
+    waterproof.roll.priceMaterial,
+    waterproof.roll.priceJob,
     dispatch,
   ]);
 
   useEffect(() => {
     const calculatePrice = (pl, obj, val, job) => {
-      if (val == 0) {
-        return 0;
+      let priceJob = 0;
+      let priceMaterial = 0;
+      if (val == 0 || pl == "0") {
+        priceMaterial = 0;
+        priceJob = 0;
+      } else {
+        priceJob = price[job] * pl;
+        priceMaterial = pl * price[obj][val];
       }
-      const priceJob = price[job] * pl;
-      const priceMaterial = pl * price[obj][val];
       return { priceMaterial, priceJob };
     };
 
-    const {
-      waterproofMasticArea,
-      waterproofRollArea,
-      waterproofMasticMaterial,
-      waterproofRollMaterial,
-    } = waterproof;
+    const { mastic, roll } = waterproof;
 
-    if (waterproofMasticArea && waterproofMasticMaterial) {
+    if (mastic.area && mastic.material) {
       const { priceMaterial: priceMaterialMastic, priceJob: priceJobMastic } =
         calculatePrice(
-          waterproofMasticArea,
+          mastic.area,
           "materialMastic",
-          waterproofMasticMaterial,
+          mastic.material,
           "jobWaterproof"
         );
 
-      if (priceMaterialMastic !== waterproof.priceMasticMaterial) {
+      if (priceMaterialMastic !== waterproof.mastic.priceMaterial) {
         setWaterproof((prevState) => ({
           ...prevState,
-          priceMasticMaterial: priceMaterialMastic,
+          mastic: {
+            ...prevState["mastic"],
+            priceMaterial: priceMaterialMastic,
+          },
         }));
       }
-      if (priceJobMastic !== waterproof.priceMasticJob) {
+      if (priceJobMastic !== waterproof.mastic.priceJob) {
         setWaterproof((prevState) => ({
           ...prevState,
-          priceMasticJob: priceJobMastic,
+          mastic: {
+            ...prevState["mastic"],
+            priceJob: priceJobMastic,
+          },
         }));
       }
     }
-    if (waterproofRollArea && waterproofRollMaterial) {
+    if (roll.area && roll.material) {
       const { priceMaterial: priceMaterialRoll, priceJob: priceJobRoll } =
         calculatePrice(
-          waterproofRollArea,
+          roll.area,
           "materialRoll",
-          waterproofRollMaterial,
+          roll.material,
           "jobWaterproof"
         );
 
-      if (priceMaterialRoll !== waterproof.priceRollMaterial) {
+      if (priceMaterialRoll !== waterproof.roll.priceMaterial) {
         setWaterproof((prevState) => ({
           ...prevState,
-          priceRollMaterial: priceMaterialRoll,
+          roll: {
+            ...prevState["roll"],
+            priceMaterial: priceMaterialRoll,
+          },
         }));
       }
-      if (priceJobRoll !== waterproof.priceRollJob) {
+      if (priceJobRoll !== waterproof.roll.priceJob) {
         setWaterproof((prevState) => ({
           ...prevState,
-          priceRollJob: priceJobRoll,
+          roll: {
+            ...prevState["roll"],
+            priceJob: priceJobRoll,
+          },
         }));
       }
     }
   }, [
-    waterproof.waterproofMasticArea,
-    waterproof.waterproofRollArea,
-    waterproof.waterproofMasticMaterial,
-    waterproof.waterproofRollMaterial,
-    waterproof.priceMasticMaterial,
-    waterproof.priceMasticJob,
-    waterproof.priceRollMaterial,
-    waterproof.priceRollJob,
+    waterproof.mastic.area,
+    waterproof.mastic.material,
+    waterproof.roll.area,
+    waterproof.roll.material,
   ]);
 
   useEffect(() => {
@@ -124,12 +140,15 @@ export const WaterproofingWorks = () => {
     localStorage.setItem("dataBuild", JSON.stringify(updatedData));
   }, [initialData, waterproof]);
 
-  const handleInputChange = async (event) => {
-    const { name, value } = event.target;
-    setWaterproof({
-      ...waterproof, // сохраняем предыдущие значения
-      [name]: value, // обновляем значение для конкретного input
-    });
+  const handleChange = (form, field) => (e) => {
+    const { value } = e.target;
+    setWaterproof((prevState) => ({
+      ...prevState,
+      [form]: {
+        ...prevState[form],
+        [field]: value || 0,
+      },
+    }));
   };
 
   return (
@@ -140,36 +159,33 @@ export const WaterproofingWorks = () => {
     >
       <Accordion title="Гидроизоляция мастикой на битумной основе" daughter>
         <Input
-          name="waterproofMasticArea"
           type="number"
           label="Площадь гидроизолируемой поверхности, м²"
           placeholder="Введите площадь гидроизолируемой поверхности"
-          value={waterproof.waterproofMasticArea}
-          onChange={handleInputChange}
+          value={waterproof.mastic.area}
+          onChange={handleChange("mastic", "area")}
         />
         <Select
           name="waterproofMasticMaterial"
           label="Материал"
-          value={waterproof.waterproofMasticMaterial}
+          value={waterproof.mastic.material}
           options={typePrice}
-          onChange={handleInputChange}
+          onChange={handleChange("mastic", "material")}
         />
       </Accordion>
       <Accordion title="Гидроизоляция рулонными материалами" daughter>
         <Input
-          name="waterproofRollArea"
           type="number"
           label="Площадь гидроизолируемой поверхности, м²"
           placeholder="Введите площадь гидроизолируемой поверхности"
-          value={waterproof.waterproofRollArea}
-          onChange={handleInputChange}
+          value={waterproof.roll.area}
+          onChange={handleChange("roll", "area")}
         />
         <Select
-          name="waterproofRollMaterial"
           label="Материал"
-          value={waterproof.waterproofRollMaterial}
+          value={waterproof.roll.material}
           options={typePrice}
-          onChange={handleInputChange}
+          onChange={handleChange("roll", "material")}
         />
       </Accordion>
     </Accordion>
