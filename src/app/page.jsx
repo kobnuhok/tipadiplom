@@ -7,8 +7,10 @@ import { FloorPouring } from "./components/floor-pouring/index";
 import { CeilingPaint } from "./components/ceiling-paint/index";
 import { SuspendedCeiling } from "./components/suspended-ceiling/index";
 import { WallCladding } from "./components/wall-cladding/index";
-import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import {GypsumLayer} from "./components/gypsum-layer/index";
+
+import {useEffect, useState} from "react";
+import {useSelector, useDispatch} from "react-redux";
 
 export default function Home() {
   const totalPrice = useSelector((state) => state.totalPrice);
@@ -33,7 +35,15 @@ export default function Home() {
         Number(totalPrice.priceSecondAlignMaterial) +
         Number(totalPrice.priceSecondAlignJob) +
         Number(totalPrice.pricePaintMaterial) +
-        Number(totalPrice.pricePaintJob)
+        Number(totalPrice.pricePaintJob) +
+        Number(totalPrice.priceGklMaterial) +
+        Number(totalPrice.priceGklJob) +
+        Number(totalPrice.priceArmstrongMaterial) +
+        Number(totalPrice.priceArmstrongJob) +
+        Number(totalPrice.priceStuccoMaterial) +
+        Number(totalPrice.priceStuccoJob) +
+        Number(totalPrice.pricePuttyMaterial) +
+        Number(totalPrice.pricePuttyJob)
     );
   }, [totalPrice]);
 
@@ -52,11 +62,12 @@ export default function Home() {
       <h1>Строительный калькулятор!</h1>
       <div className="form">
         <div className="body">
-          <ConstructionPartitions />
-          <WaterproofingWorks />
           <FloorPouring />
+          <WaterproofingWorks />
+          <ConstructionPartitions />
+          <SuspendedCeiling />
+          <GypsumLayer />
           <CeilingPaint />
-          {/* <SuspendedCeiling /> */}
           <WallCladding />
         </div>
         <div className="total">

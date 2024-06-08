@@ -16,13 +16,6 @@ export default function RootLayout({ children }) {
         <div>
           <header>
             <a className="header" href="/">
-              <Image
-                className="logo"
-                src="/logo.svg"
-                alt="Vite logo"
-                width={150}
-                height={50}
-              />
               <span>Строительный калькулятор</span>
             </a>
           </header>
