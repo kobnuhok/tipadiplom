@@ -6,11 +6,16 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "server": "nodemon ./server/index.js",
+    "serdev": "node ./server/index.js"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.4.1",
     "next": "14.2.3",
+    "nodemon": "^3.1.2",
     "react": "^18",
     "react-dom": "^18",
     "react-redux": "^9.1.2"

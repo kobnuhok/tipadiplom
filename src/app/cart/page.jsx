@@ -7,6 +7,7 @@ import { ItemCart } from "../components/item-cart/index";
 export default function Cart() {
   const [cartArray, setCartArray] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [status, setStatus] = useState(false);
   const [user, setUser] = useState({
     name: "",
     phone: "",
@@ -34,13 +35,27 @@ export default function Cart() {
     setIsModalOpen(false);
   };
 
+  const send = async () => {
+    const res = await fetch("http://localhost:3005/api/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json;charset=utf-8",
+      },
+      body: JSON.stringify({
+        name: user.name || null,
+        email: user.phone || null,
+        order: cartArray || null,
+      }),
+    });
+    handleCloseModal();
+  };
+
   const handleUser = (e) => {
     const { value, name } = e.target;
     setUser({
       ...user,
       [name]: value,
     });
-    console.log("user", user);
   };
 
   return (
@@ -82,6 +97,10 @@ export default function Cart() {
         </button>
       </footer>
       <OrderModal show={isModalOpen} onClose={handleCloseModal}>
+        {/* {status === "ok" ? (
+          <div>Ваш заказ успешно создан. Ожидайте звонка оператора</div>
+        ) : (
+          <> */}
         <h2>Отправить заявку</h2>
         <div className="order">
           <label htmlFor="name">
@@ -104,8 +123,12 @@ export default function Cart() {
               onChange={handleUser}
             />
           </label>
-          <button className="order__button">Отравить расчет</button>
+          <button className="order__button" onClick={send}>
+            Отравить расчет
+          </button>
         </div>
+        {/* </>
+        )} */}
       </OrderModal>
     </div>
   );
