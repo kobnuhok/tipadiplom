@@ -3,8 +3,14 @@ const Order = require("../models/user");
 
 const userRouter = express.Router();
 
-userRouter.get("/users", (req, res) => {
-  res.json({ message: "Маршрут пользователя" });
+userRouter.get("/users", async (req, res) => {
+  const orders = await Order.find().select("-__v");
+  // console.log("orders", orders);
+  try {
+    res.json(orders);
+  } catch (error) {
+    res.json({ status: "error" });
+  }
 });
 
 userRouter.post("/users", async (req, res) => {

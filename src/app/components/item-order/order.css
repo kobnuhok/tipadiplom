@@ -1,0 +1,23 @@
+.order {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.order__client {
+  display: flex;
+  gap: 12px;
+}
+.order__detailed {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.order__info {
+  display: flex;
+  gap: 12px;
+}
+.order__item {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}

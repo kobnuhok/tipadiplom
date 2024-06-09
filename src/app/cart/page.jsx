@@ -33,6 +33,7 @@ export default function Cart() {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    setStatus(false);
   };
 
   const send = async () => {
@@ -45,9 +46,11 @@ export default function Cart() {
         name: user.name || null,
         email: user.phone || null,
         order: cartArray || null,
+        status: "created",
       }),
     });
-    handleCloseModal();
+    const data = await res.json();
+    setStatus(data.status);
   };
 
   const handleUser = (e) => {
@@ -97,38 +100,54 @@ export default function Cart() {
         </button>
       </footer>
       <OrderModal show={isModalOpen} onClose={handleCloseModal}>
-        {/* {status === "ok" ? (
-          <div>Ваш заказ успешно создан. Ожидайте звонка оператора</div>
+        {status === "ok" ? (
+          <div>
+            <h1>Успешно</h1>
+            <span>Ваш заказ успешно создан. Ожидайте звонка оператора</span>
+            <button className="order__button" onClick={handleCloseModal}>
+              Закрыть
+            </button>
+          </div>
+        ) : status === "error" ? (
+          <div>
+            <h1>Ошибка </h1>
+            <span>
+              Что-то пошло не так. попробуйте еще раз отправить заявку
+            </span>
+            <button className="order__button" onClick={handleCloseModal}>
+              Закрыть
+            </button>
+          </div>
         ) : (
-          <> */}
-        <h2>Отправить заявку</h2>
-        <div className="order">
-          <label htmlFor="name">
-            <span className="order__label">Имя</span>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              value={user.name}
-              onChange={handleUser}
-            />
-          </label>
-          <label htmlFor="phone">
-            <span className="order__label">Телефон</span>
-            <input
-              id="phone"
-              name="phone"
-              type="text"
-              value={user.phone}
-              onChange={handleUser}
-            />
-          </label>
-          <button className="order__button" onClick={send}>
-            Отравить расчет
-          </button>
-        </div>
-        {/* </>
-        )} */}
+          <>
+            <h2>Отправить заявку</h2>
+            <div className="order">
+              <label htmlFor="name">
+                <span className="order__label">Имя</span>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  value={user.name}
+                  onChange={handleUser}
+                />
+              </label>
+              <label htmlFor="phone">
+                <span className="order__label">Телефон</span>
+                <input
+                  id="phone"
+                  name="phone"
+                  type="text"
+                  value={user.phone}
+                  onChange={handleUser}
+                />
+              </label>
+              <button className="order__button" onClick={send}>
+                Отправить расчет
+              </button>
+            </div>
+          </>
+        )}
       </OrderModal>
     </div>
   );
