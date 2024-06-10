@@ -8,6 +8,7 @@ import { CeilingPaint } from "./components/ceiling-paint/index";
 import { SuspendedCeiling } from "./components/suspended-ceiling/index";
 import { WallCladding } from "./components/wall-cladding/index";
 import {GypsumLayer} from "./components/gypsum-layer/index";
+import {WallpaperWorks} from "./components/wallpaper/index";
 
 import {useEffect, useState} from "react";
 import {useSelector, useDispatch} from "react-redux";
@@ -43,7 +44,9 @@ export default function Home() {
         Number(totalPrice.priceStuccoMaterial) +
         Number(totalPrice.priceStuccoJob) +
         Number(totalPrice.pricePuttyMaterial) +
-        Number(totalPrice.pricePuttyJob)
+        Number(totalPrice.pricePuttyJob) +
+        Number(totalPrice.priceWallpaperingMaterial) +
+        Number(totalPrice.priceWallpaperingJob)
     );
   }, [totalPrice]);
 
@@ -69,6 +72,7 @@ export default function Home() {
           <GypsumLayer />
           <CeilingPaint />
           <WallCladding />
+          <WallpaperWorks />
         </div>
         <div className="total">
           <div className="total__head">

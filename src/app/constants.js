@@ -80,6 +80,12 @@ export const price = {
     expensive: 699,
   },
   jobPutty: 245,
+  materialWallpaper: {
+    cheap: 300,
+    optimal: 500,
+    expensive: 800,
+  },
+  jobWallpaper: 100,
 };
 
 export const typePrice = [
@@ -111,11 +117,12 @@ export const optionsDrywallProfileWidth = [
     value: 50,
   },
   {
-    label: "ширина профиля 75",
+    label: "Ширина профиля 75",
     value: 75,
   },
   {
-    label: "ширина профиля 100",
+    label: "Ширина профиля 100",
     value: 100,
   },
 ];
+  
