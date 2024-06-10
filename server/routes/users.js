@@ -5,7 +5,7 @@ const userRouter = express.Router();
 
 userRouter.get("/users", async (req, res) => {
   const orders = await Order.find().select("-__v");
-  // console.log("orders", orders);
+
   try {
     res.json(orders);
   } catch (error) {
@@ -14,11 +14,12 @@ userRouter.get("/users", async (req, res) => {
 });
 
 userRouter.post("/users", async (req, res) => {
-  const { name, email, order } = req.body;
+  const { name, phone, order, status } = req.body;
   const newOrder = new Order({
     name,
-    email,
+    phone,
     order: JSON.stringify(order),
+    status,
   });
   try {
     await newOrder.save();

@@ -44,7 +44,7 @@ export default function Cart() {
       },
       body: JSON.stringify({
         name: user.name || null,
-        email: user.phone || null,
+        phone: user.phone || null,
         order: cartArray || null,
         status: "created",
       }),
